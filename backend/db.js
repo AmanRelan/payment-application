@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt');
 
-mongoose.connect("mongodb+srv://amanrelan1734:DFgyuhNEfedWiDl5@cluster0.yrigu8b.mongodb.net/paytm")
+mongoose.connect("<Mongo URL>")
 
 const userSchema = mongoose.Schema({
     username: String,
@@ -11,13 +12,13 @@ const userSchema = mongoose.Schema({
     firstName: String,
     lastName: String,
 })
-UserSchema.methods.createHash = async function (plainTextPassword) {
+userSchema.methods.createHash = async function (plainTextPassword) {
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
     return await bcrypt.hash(plainTextPassword, salt);
 };
 
-UserSchema.methods.validatePassword = async function (candidatePassword) {
+userSchema.methods.validatePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password_hash);
 };
 

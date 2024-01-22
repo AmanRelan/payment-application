@@ -1,11 +1,13 @@
 const express = require('express');
-const { User } = require('../db')
-import { z } from "zod";
-import { JWT_SECRET } from "../config";
+const { User, Account } = require('../db')
+const zod = require('zod');
+const { JWT_SECRET } = require('../config')
+const { authMiddleware } = require('../middleware')
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
-const userSchema = z.string({
+const userSchema = zod.string({
     username: zod.string().email(),
     firstName: zod.string(),
     lastName: zod.string(),
@@ -31,7 +33,8 @@ router.post('/signup', async (req, res) => {
         firstName: req.body.firstName,
         lastName: req.body.lastName
     });
-    const hashedPassword = await newUser.createHash(req.body.password);
+    const salt = 'Creating Hashed password';
+    const hashedPassword = await newUser.createHash(req.body.password, salt);
     newUser.password_hash = hashedPassword;
     await newUser.save();
 
@@ -58,7 +61,7 @@ router.post('/signin', async (req, res) => {
         });
     } else {
         if (await user.validatePassword(req.body.password)) {
-            const userId = user._userid
+            const userId = user._id;
             const token = jwt.sign({ userId }, JWT_SECRET)
             return res.status(200).json({
                 message: "User Successfully Logged In",
@@ -86,7 +89,7 @@ router.put("/", authMiddleware, async (req, res) => {
     }
 
     await User.updateOne(req.body, {
-        id: req.userId
+        id: req.userId,
     })
 
     res.json({
