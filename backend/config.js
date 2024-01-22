@@ -1,1 +1,3 @@
-export const JWT_SECRET = 'my-jwt-secret'
+module.exports = {
+    JWT_SECRET: "your-jwt-secret"
+}
