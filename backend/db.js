@@ -1,17 +1,35 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt');
 
-mongoose.connect("<Mongo URL>")
+mongoose.connect("mongodb+srv://amanrelan1734:DFgyuhNEfedWiDl5@cluster0.yrigu8b.mongodb.net/paytm")
 
 const userSchema = mongoose.Schema({
-    username: String,
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
+        minLength: 3,
+        maxLength: 30
+    },
+    firstName: {
+        type: String,
+        required: true,
+        trim: true,
+        maxLength: 50
+    },
+    lastName: {
+        type: String,
+        required: true,
+        trim: true,
+        maxLength: 50
+    },
     password_hash: {
         type: String,
         required: true,
     },
-    firstName: String,
-    lastName: String,
-})
+});
 userSchema.methods.createHash = async function (plainTextPassword) {
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
@@ -34,8 +52,8 @@ const accountSchema = new mongoose.Schema({
     }
 });
 
-const User = mongoose.model("User", userSchema)
 const Account = mongoose.model('Account', accountSchema);
+const User = mongoose.model('User', userSchema);
 
 module.exports = {
     User,
