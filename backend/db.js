@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt');
 
-mongoose.connect("mongodb+srv://amanrelan1734:DFgyuhNEfedWiDl5@cluster0.yrigu8b.mongodb.net/paytm")
+mongoose.connect("<mongo URL>")
 
 const userSchema = mongoose.Schema({
     username: {
